@@ -1,0 +1,33 @@
+---
+# influx repo
+- name: Add influxdata GPG key
+  rpm_key:
+    state: present
+    key: "{{ influxdata_gpg_url }}"
+
+- name: Create influxdata yum repo
+  yum_repository:
+    name: influxdata
+    description: Influx
+    baseurl: "{{ influxdata_yum_repo_url }}"
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: "{{ influxdata_gpg_url }}"
+    state: present
+
+# telegraf
+- name: Install telegraf
+  yum:
+    name: telegraf
+    state: present
+
+- name: Configure telegraf
+  template:
+    src: telegraf.conf.j2
+    dest: /etc/telegraf/telegraf.conf
+
+- name: Start telegraf
+  service:
+    name: telegraf
+    state: started
+    enabled: yes

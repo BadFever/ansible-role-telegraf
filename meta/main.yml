@@ -1,0 +1,10 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: jilltz
+  description: "Install telegraf"
+  platforms:
+    - name: EL
+      versions:
+      - 7
