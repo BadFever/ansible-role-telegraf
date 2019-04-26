@@ -1,14 +1,16 @@
 # ansible-role-tick
 
-Setup TICK Stack (Telegraf, InfluxDB, Chronograf, Kapacitor) and Grafana.
+Installs telegraf on CentOS 7 for client monitoring.
 
 ## Requirements
 
-None
+None.
 
 ## Role Variables
 
 ## Dependencies
+
+None.
 
 ## Example Playbook
 
@@ -16,8 +18,7 @@ None
 - hosts: all
   remote_user: root
   roles:
-    - ansible-role-nginx
-    - ansible-role-tick
+    - ansible-role-telegraf
 ```
 
 ## License
@@ -45,11 +46,8 @@ EOF
 yum -y install telegraf
 
 # generate config
-telegraf --input-filter cpu:disk:diskio:dns_query:mem:net:netstat:ping:system: --output-filter influxdb config > telegraf.conf
+# telegraf --input-filter cpu:disk:diskio:dns_query:mem:net:netstat:ping:system: --output-filter influxdb config > telegraf.conf
 
-# syslog reciever
-firewall-cmd --zone=internal --add-port=6514/tcp --permanent
-firewall-cmd --reload
 
 # start and enable service
 systemctl start telegraf
