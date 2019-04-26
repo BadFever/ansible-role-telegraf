@@ -10,8 +10,8 @@
     name: influxdata
     description: Influx
     baseurl: "{{ influxdata_yum_repo_url }}"
-    enabled: yes
-    gpgcheck: yes
+    enabled: true
+    gpgcheck: true
     gpgkey: "{{ influxdata_gpg_url }}"
     state: present
 
@@ -55,4 +55,4 @@
   service:
     name: telegraf
     state: started
-    enabled: yes
+    enabled: true
