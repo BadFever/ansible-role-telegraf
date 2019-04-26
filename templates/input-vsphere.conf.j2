@@ -1,0 +1,51 @@
+[[inputs.vsphere]]
+  ## List of vCenter URLs to be monitored. These three lines must be uncommented
+  ## and edited for the plugin to work.
+  vcenters = [ {{telegraf_vsphere_vcenters}} ]
+  username = {{telegraf_vsphere_username}}
+  password = {{telegraf_vsphere_password}}
+
+  ## VMs
+  vm_metric_include = []
+  vm_metric_exclude = []
+  vm_instances = true
+
+  ## Hosts
+  host_metric_include = []
+  host_metric_exclude = []
+  host_instances = true
+
+  ## Clusters
+  cluster_metric_include = []
+  cluster_metric_exclude = []
+  cluster_instances = true
+
+  ## Datastores
+  datastore_metric_include = []
+  datastore_metric_exclude = []
+  datastore_instances = true
+
+  ## Datacenters
+  #datacenter_metric_include = []
+  #datacenter_metric_exclude = [ "*" ] ## Datacenters are not collected by default.
+  #datacenter_instances = false ## false by default for Datastores only
+
+  ## Plugin Settings
+  ## separator character to use for measurement and field names (default: "_")
+  # separator = "_"
+
+  interval = "{{telegraf_vsphere_interval}}"
+  max_query_objects = {{telegraf_vsphere_max_query_objects}}
+  max_query_metrics = {{telegraf_vsphere_max_query_metrics}}
+  collect_concurrency = {{telegraf_vsphere_collect_concurrency}}
+  discover_concurrency = {{telegraf_vsphere_discover_concurrency}}
+  # force_discover_on_init = false
+  object_discovery_interval = "{{telegraf_vsphere_object_discovery_interval}}"
+  timeout = "{{telegraf_vsphere_timeout}}"
+
+  ## Optional SSL Config
+  # ssl_ca = "/path/to/cafile"
+  # ssl_cert = "/path/to/certfile"
+  # ssl_key = "/path/to/keyfile"
+  ## Use SSL but skip chain & host verification
+  insecure_skip_verify = {{telegraf_vsphere_insecure_skip_verify}}

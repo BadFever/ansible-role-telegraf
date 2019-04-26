@@ -26,6 +26,16 @@
     src: telegraf.conf.j2
     dest: /etc/telegraf/telegraf.conf
 
+- name: Configure system input plugin
+  file:
+    src: input-system.conf
+    dst: /etc/telegraf/telegraf.d/input-system.conf
+
+- name: Configure vSphere input plugin
+  template:
+    src: input-vsphere.conf.j2
+    dst: /etc/telegraf/telegraf.d/input-vsphere.conf
+
 - name: Start telegraf
   service:
     name: telegraf

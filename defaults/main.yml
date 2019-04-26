@@ -2,7 +2,23 @@
 influxdata_yum_repo_url: https://repos.influxdata.com/rhel/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/stable
 influxdata_gpg_url: https://repos.influxdata.com/influxdb.key
 
-influxdb_url: http://192.168.0.119:8086
+influxdb_url: http://localhost:8086
 influxdb_database: telegraf
 influxdb_user: telegraf
 influxdb_password: telegraf
+
+telegraf_metric_batch_size: 1000
+telegraf_metric_buffer_limit: 10000
+telegraf_vsphere_plugin_enabled: false
+
+telegraf_vsphere_vcenters: ["https://vcsa.home.lab/sdk"]
+telegraf_vsphere_username: "telegraf@vsphere.local"
+telegraf_vsphere_password: "telegraf"
+telegraf_vsphere_interval: "60s"
+telegraf_vsphere_max_query_objects: 256
+telegraf_vsphere_max_query_metrics: 256
+telegraf_vsphere_collect_concurrency: 1
+telegraf_vsphere_discover_concurrency: 1
+telegraf_vsphere_object_discovery_interval: "300s"
+telegraf_vsphere_timeout: "60s"
+telegraf_vsphere_insecure_skip_verify: true
