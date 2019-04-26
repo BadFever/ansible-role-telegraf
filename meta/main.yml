@@ -4,6 +4,7 @@ dependencies: []
 galaxy_info:
   author: jilltz
   description: "Install telegraf"
+  license: "license (BSD, MIT)"
   platforms:
     - name: EL
       versions:
