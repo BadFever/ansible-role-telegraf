@@ -61,7 +61,7 @@ telegraf_metric_buffer_limit: 10000
 The vSphere plugin vCenters.
 
 ```yaml
-telegraf_vsphere_vcenters: ["https://vcsa.home.lab/sdk"]
+telegraf_vsphere_vcenters: ["https://vcsa/sdk"]
 ```
 
 Enable or disable the vSphere input plugin.
