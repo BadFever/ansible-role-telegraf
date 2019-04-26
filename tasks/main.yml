@@ -25,16 +25,23 @@
   template:
     src: telegraf.conf.j2
     dest: /etc/telegraf/telegraf.conf
+  notify:
+    - Restart telegraf
 
 - name: Configure system input plugin
   copy:
     src: input-system.conf
     dest: /etc/telegraf/telegraf.d/input-system.conf
+  notify:
+    - Restart telegraf
 
 - name: Configure vSphere input plugin
   template:
     src: input-vsphere.conf.j2
     dest: /etc/telegraf/telegraf.d/input-vsphere.conf
+  when: telegraf_vsphere_plugin_enabled
+  notify:
+    - Restart telegraf
 
 - name: Start telegraf
   service:
