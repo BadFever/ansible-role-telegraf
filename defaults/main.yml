@@ -2,7 +2,7 @@
 influxdata_yum_repo_url: https://repos.influxdata.com/rhel/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/stable
 influxdata_gpg_url: https://repos.influxdata.com/influxdb.key
 
-influxdb_url: http://192.168.0.119:8886
+influxdb_url: http://192.168.0.119:8086
 influxdb_database: telegraf
 influxdb_user: telegraf
 influxdb_password: telegraf
