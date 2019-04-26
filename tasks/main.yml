@@ -47,7 +47,7 @@
   file:
     path: /etc/telegraf/telegraf.d/input-vsphere.conf
     state: absent
-  when: telegraf_vsphere_plugin_enabled == false
+  when: not telegraf_vsphere_plugin_enabled
   notify:
     - Restart telegraf
 
