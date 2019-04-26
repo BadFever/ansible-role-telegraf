@@ -27,7 +27,7 @@
     dest: /etc/telegraf/telegraf.conf
 
 - name: Configure system input plugin
-  file:
+  copy:
     src: input-system.conf
     dst: /etc/telegraf/telegraf.d/input-system.conf
 
