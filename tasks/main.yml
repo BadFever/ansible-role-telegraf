@@ -43,6 +43,14 @@
   notify:
     - Restart telegraf
 
+- name: Remove vSphere input plugin
+  file:
+    path: /etc/telegraf/telegraf.d/input-vsphere.conf
+    state: absent
+  when: telegraf_vsphere_plugin_enabled == false
+  notify:
+    - Restart telegraf
+
 - name: Start telegraf
   service:
     name: telegraf
