@@ -1,6 +1,6 @@
 # ansible-role-telegraf
 
-[![Build Status](https://travis-ci.org/BadFever/ansible-role-packer.svg?branch=master)](https://travis-ci.org/BadFever/ansible-role-telegraf)
+[![Build Status](https://travis-ci.org/BadFever/ansible-role-telegraf.svg?branch=master)](https://travis-ci.org/BadFever/ansible-role-telegraf)
 
 Installs telegraf on CentOS 7 for client monitoring.
 
