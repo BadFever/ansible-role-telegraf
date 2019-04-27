@@ -6,7 +6,7 @@
     owner: telegraf
     group: telegraf
     mode: 0640
-  become: yes
+  become: true
   notify:
     - Restart Telegraf
 
@@ -25,7 +25,7 @@
   when:
     - telegraf_plugins_extra_exclusive
     - telegraf_directory.stat.exists
-  become: yes
+  become: true
   notify:
     - Restart Telegraf
 
@@ -39,7 +39,7 @@
   when:
     - telegraf_plugins_extra_exclusive
     - telegraf_directory.stat.exists
-  become: yes
+  become: true
   notify:
     - Restart Telegraf
 
@@ -57,7 +57,7 @@
     - telegraf_plugins_extra is defined
     - telegraf_plugins_extra is iterable
     - item.value.state|default('present') != 'absent'
-  become: yes
+  become: true
   notify:
     - Restart Telegraf
 
@@ -72,7 +72,7 @@
     - telegraf_plugins_extra is defined
     - telegraf_plugins_extra is iterable
     - item.value.state|default('present') == 'absent'
-  become: yes
+  become: true
   notify:
     - Restart Telegraf
 
@@ -84,4 +84,4 @@
     name: telegraf
     state: started
     enabled: yes
-  become: yes
+  become: true
