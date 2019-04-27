@@ -1,24 +1,52 @@
 ---
-influxdata_yum_repo_url: https://repos.influxdata.com/rhel/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/stable
-influxdata_gpg_url: https://repos.influxdata.com/influxdb.key
+telegraf_agent_config_path: /etc/telegraf
+telegraf_redhat_releasever: "$releasever"
+telegraf_yum_baseurl:
+  centos: "https://repos.influxdata.com/rhel/{{ telegraf_redhat_releasever }}/$basearch/stable"
+  default: "https://repos.influxdata.com/{{ ansible_distribution|lower }}/{{ telegraf_redhat_releasever }}/$basearch/stable"
+  redhat: "https://repos.influxdata.com/rhel/{{ telegraf_redhat_releasever }}/$basearch/stable"
 
-influxdb_url: http://localhost:8086
-influxdb_database: telegraf
-influxdb_user: telegraf
-influxdb_password: telegraf
 
-telegraf_metric_batch_size: 1000
-telegraf_metric_buffer_limit: 10000
-telegraf_vsphere_plugin_enabled: false
 
-telegraf_vsphere_vcenters: "\"https://vcsa/sdk\""
-telegraf_vsphere_username: "telegraf@vsphere.local"
-telegraf_vsphere_password: "telegraf"
-telegraf_vsphere_interval: "60s"
-telegraf_vsphere_max_query_objects: 256
-telegraf_vsphere_max_query_metrics: 256
-telegraf_vsphere_collect_concurrency: 1
-telegraf_vsphere_discover_concurrency: 1
-telegraf_vsphere_object_discovery_interval: "300s"
-telegraf_vsphere_timeout: "60s"
-telegraf_vsphere_insecure_skip_verify: "true"
+# Telegraf global tags
+telegraf_global_tags: []
+
+# Telegraf agent
+telegraf_agent_interval: 10
+telegraf_agent_debug: False
+telegraf_agent_round_interval: True
+telegraf_agent_flush_interval: 10
+telegraf_agent_flush_jitter: 0
+telegraf_agent_collection_jitter: 0
+telegraf_agent_metric_batch_size: 1000
+telegraf_agent_metric_buffer_limit: 10000
+telegraf_agent_quiet: False
+telegraf_agent_logfile: ""
+telegraf_agent_omit_hostname: False
+
+# Telegraf output plugins
+telegraf_agent_output:
+  - type: influxdb
+    config:
+      - urls = ["http://localhost:8086"]
+      - database = "telegraf"
+      - precision = "s"
+
+# Telegraf input plugins
+# defaults - /etc/telegraf/telegraf.conf
+telegraf_plugins_default:
+  - plugin: cpu
+    config:
+      - percpu = true
+  - plugin: disk
+  - plugin: io
+  - plugin: mem
+  - plugin: net
+  - plugin: system
+  - plugin: swap
+  - plugin: netstat
+  - plugin: processes
+  - plugin: kernel
+
+telegraf_plugins_extra: {}
+telegraf_plugins_extra_exclusive: False

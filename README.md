@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/BadFever/ansible-role-telegraf.svg?branch=master)](https://travis-ci.org/BadFever/ansible-role-telegraf)
 
-Installs telegraf on CentOS 7 for client monitoring.
+Installs telegraf on CentOS 7 for client monitoring only.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ influxdb_url: http://localhost:8086
 The name of the influxdb database.
 
 ```yaml
-influxdb_database: telegraf
+influxdb_database: telegraf_
 ```
 
 The user for accessing the infuxdb via http.
@@ -60,78 +60,6 @@ The telegraf buffer size
 telegraf_metric_buffer_limit: 10000
 ```
 
-The vSphere plugin vCenters.
-
-```yaml
-telegraf_vsphere_vcenters: ["https://vcsa/sdk"]
-```
-
-Enable or disable the vSphere input plugin.
-
-```yaml
-telegraf_vsphere_plugin_enabled: false
-```
-
-The vSphere plugin vCenter user.
-
-```yaml
-telegraf_vsphere_username: "telegraf@vsphere.local"
-```
-
-The vSphere plugin vCenter password
-
-```yaml
-telegraf_vsphere_password: "telegraf"
-```
-
-The vSphere plugin collector interval.
-
-```yaml
-telegraf_vsphere_interval: "60s"
-```
-
-The vSphere plugin object query limit.
-
-```yaml
-telegraf_vsphere_max_query_objects: 256
-```
-
-The vSphere plugin object metric limit.
-
-```yaml
-telegraf_vsphere_max_query_metrics: 256
-```
-
-The vSphere plugin object collectors go routines.
-
-```yaml
-telegraf_vsphere_collect_concurrency: 1
-```
-
-The vSphere plugin object discover go routines.
-
-```yaml
-telegraf_vsphere_discover_concurrency: 1
-```
-
-The vSphere plugin object discovery interval.
-
-```yaml
-telegraf_vsphere_object_discovery_interval: "300s"
-```
-
-The vSphere plugin api request timeout.
-
-```yaml
-telegraf_vsphere_timeout: "60s"
-```
-
-Skip insecure vCenter certificates.
-
-```yaml
-telegraf_vsphere_insecure_skip_verify: true
-```
-
 ## Dependencies
 
 None.
@@ -153,3 +81,41 @@ None.
 ## License
 
 MIT
+
+
+[[outputs.influxdb]]
+
+  urls = ["{{ influxdb_url }}"]
+  database = "{{ influxdb_database }}"
+  # database_tag = ""
+  skip_database_creation = true
+
+  ## Name of existing retention policy to write to.  Empty string writes to
+  ## the default retention policy.  Only takes effect when using HTTP.
+  # retention_policy = ""
+
+  # timeout = "5s"
+  ## HTTP Basic Auth
+  username = "{{ influxdb_user }}"
+  password = "{{ influxdb_password }}"
+
+  ## Optional TLS Config for use on HTTP connections.
+  # tls_ca = "/etc/telegraf/ca.pem"
+  # tls_cert = "/etc/telegraf/cert.pem"
+  # tls_key = "/etc/telegraf/key.pem"
+  ## Use TLS but skip chain & host verification
+  # insecure_skip_verify = false
+
+
+telegraf_vsphere_vcenters: "\"https://vcsa/sdk\""
+telegraf_vsphere_username: "telegraf@vsphere.local"
+telegraf_vsphere_password: "telegraf"
+telegraf_vsphere_interval: "60s"
+telegraf_vsphere_max_query_objects: 256
+telegraf_vsphere_max_query_metrics: 256
+telegraf_vsphere_collect_concurrency: 1
+telegraf_vsphere_discover_concurrency: 1
+telegraf_vsphere_object_discovery_interval: "300s"
+telegraf_vsphere_timeout: "60s"
+telegraf_vsphere_insecure_skip_verify: "true"
+

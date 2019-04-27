@@ -1,58 +1,10 @@
 ---
-# influx repo
-- name: Add influxdata GPG key
-  rpm_key:
-    state: present
-    key: "{{ influxdata_gpg_url }}"
+- name: Install on RedHat
+  include_tasks: redhat.yml
+  when:
+    - ansibe_os_family == "RedHat"
 
-- name: Create influxdata yum repo
-  yum_repository:
-    name: influxdata
-    description: Influx
-    baseurl: "{{ influxdata_yum_repo_url }}"
-    enabled: true
-    gpgcheck: true
-    gpgkey: "{{ influxdata_gpg_url }}"
-    state: present
-
-# telegraf
-- name: Install telegraf
-  yum:
-    name: telegraf
-    state: present
-
-- name: Configure telegraf
-  template:
-    src: telegraf.conf.j2
-    dest: /etc/telegraf/telegraf.conf
-  notify:
-    - Restart telegraf
-
-- name: Configure system input plugin
-  copy:
-    src: input-system.conf
-    dest: /etc/telegraf/telegraf.d/input-system.conf
-  notify:
-    - Restart telegraf
-
-- name: Configure vSphere input plugin
-  template:
-    src: input-vsphere.conf.j2
-    dest: /etc/telegraf/telegraf.d/input-vsphere.conf
-  when: telegraf_vsphere_plugin_enabled
-  notify:
-    - Restart telegraf
-
-- name: Remove vSphere input plugin
-  file:
-    path: /etc/telegraf/telegraf.d/input-vsphere.conf
-    state: absent
-  when: not telegraf_vsphere_plugin_enabled
-  notify:
-    - Restart telegraf
-
-- name: Start telegraf
-  service:
-    name: telegraf
-    state: started
-    enabled: true
+- name: Configure Unix
+  include_tasks: config_unix.yml
+  when:
+    - ansible_os_family != "Windows"

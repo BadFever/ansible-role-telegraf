@@ -1,142 +1,105 @@
-# Telegraf Configuration
-#
-# Telegraf is entirely plugin driven. All metrics are gathered from the
-# declared inputs, and sent to the declared outputs.
-#
-# Plugins must be declared in here to be active.
-# To deactivate a plugin, comment out the name and any variables.
-#
-# Use 'telegraf -config telegraf.conf -test' to see what metrics a config
-# file would generate.
-#
-# Environment variables can be used anywhere in this config file, simply prepend
-# them with $. For strings the variable must be within quotes (ie, "$STR_VAR"),
-# for numbers and booleans they should be plain (ie, $INT_VAR, $BOOL_VAR)
+### MANAGED BY {{ role_path|basename }} ANSIBLE ROLE ###
 
-
-# Global tags can be specified here in key="value" format.
 [global_tags]
+{% if telegraf_global_tags is defined and telegraf_global_tags is iterable %}
+{% for item in telegraf_global_tags %}
+    {{ item.tag_name }} = "{{ item.tag_value }}"
+{% endfor %}
+{% endif %}
 
 # Configuration for telegraf agent
 [agent]
-  ## Default data collection interval for all inputs
-  interval = "10s"
-  ## Rounds collection interval to 'interval'
-  ## ie, if interval="10s" then always collect on :00, :10, :20, etc.
-  round_interval = true
-
-  ## Telegraf will send metrics to outputs in batches of at most
-  ## metric_batch_size metrics.
-  ## This controls the size of writes that Telegraf sends to output plugins.
-  metric_batch_size = {{telegraf_metric_batch_size}}
-
-  ## For failed writes, telegraf will cache metric_buffer_limit metrics for each
-  ## output, and will flush this buffer on a successful write. Oldest metrics
-  ## are dropped first when this buffer fills.
-  ## This buffer only fills when writes fail to output plugin(s).
-  metric_buffer_limit = {{telegraf_metric_buffer_limit}}
-
-  ## Collection jitter is used to jitter the collection by a random amount.
-  ## Each plugin will sleep for a random time within jitter before collecting.
-  ## This can be used to avoid many plugins querying things like sysfs at the
-  ## same time, which can have a measurable effect on the system.
-  collection_jitter = "0s"
-
-  ## Default flushing interval for all outputs. Maximum flush_interval will be
-  ## flush_interval + flush_jitter
-  flush_interval = "10s"
-  ## Jitter the flush interval by a random amount. This is primarily to avoid
-  ## large write spikes for users running a large number of telegraf instances.
-  ## ie, a jitter of 5s and interval 10s means flushes will happen every 10-15s
-  flush_jitter = "0s"
-
-  ## By default or when set to "0s", precision will be set to the same
-  ## timestamp order as the collection interval, with the maximum being 1s.
-  ##   ie, when interval = "10s", precision will be "1s"
-  ##       when interval = "250ms", precision will be "1ms"
-  ## Precision will NOT be used for service inputs. It is up to each individual
-  ## service input to set the timestamp at the appropriate precision.
-  ## Valid time units are "ns", "us" (or "µs"), "ms", "s".
-  precision = ""
-
-  ## Logging configuration:
-  ## Run telegraf with debug log messages.
-  debug = false
-  ## Run telegraf in quiet mode (error log messages only).
-  quiet = false
-  ## Specify the log file name. The empty string means to log to stderr.
-  logfile = ""
-
-  ## Override default hostname, if empty use os.Hostname()
-  hostname = ""
-  ## If set to true, do no set the "host" tag in the telegraf agent.
-  omit_hostname = false
-
+  interval = "{{ telegraf_agent_interval }}s"
+  debug = {{ telegraf_agent_debug | lower }}
+  hostname = "{{ telegraf_agent_hostname }}"
+  round_interval = {{ telegraf_agent_round_interval | lower }}
+  flush_interval = "{{ telegraf_agent_flush_interval }}s"
+  flush_jitter = "{{ telegraf_agent_flush_jitter }}s"
+  collection_jitter = "{{ telegraf_agent_collection_jitter }}s"
+  metric_batch_size = {{ telegraf_agent_metric_batch_size }}
+  metric_buffer_limit = {{ telegraf_agent_metric_buffer_limit }}
+  quiet = {{ telegraf_agent_quiet | lower }}
+{% if ansible_os_family == "Windows" %}
+  logfile = "{{ telegraf_win_logfile }}"
+{% else %}
+  logfile = "{{ telegraf_agent_logfile }}"
+{% endif %}
+  omit_hostname = {{ telegraf_agent_omit_hostname | lower }}
 
 ###############################################################################
 #                            OUTPUT PLUGINS                                   #
 ###############################################################################
 
+{% if telegraf_agent_output is defined and telegraf_agent_output is iterable %}
+{% for item in telegraf_agent_output %}
+[[outputs.{{ item.type }}]]
+{% for items in item.config %}
+    {{ items }}
+{% endfor %}
+{% if item.tagpass is defined and item.tagpass is iterable %}
+[outputs.{{ item.type }}.tagpass]
+{% for items in item.tagpass %}
+    {{ items }}
+{% endfor %}
+{% endif %}
+{% if item.tagdrop is defined and item.tagdrop is iterable %}
+[outputs.{{ item.type }}.tagdrop]
+{% for items in item.tagdrop %}
+    {{ items }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
 
-# Configuration for sending metrics to InfluxDB
-[[outputs.influxdb]]
-  ## The full HTTP or UDP URL for your InfluxDB instance.
-  urls = ["{{ influxdb_url }}"]
+###############################################################################
+#                                  INPUTS                                     #
+###############################################################################
 
-  ## The target database for metrics; will be created as needed.
-  ## For UDP url endpoint database needs to be configured on server side.
-  database = "{{ influxdb_database }}"
+{% if telegraf_plugins_default is defined and telegraf_plugins_default is iterable %}
+{% for item in telegraf_plugins_default %}
+[[inputs.{{ item.plugin }}]]
+{% if item.interval is defined %}
+  interval = "{{ item.interval }}s"
+{% endif %}
+{% if item.config is defined and item.config is iterable %}
+{% for items in item.config %}
+  {{ items }}
+{% endfor %}
+{% endif %}
+{% if item.tags is defined and item.tags is iterable %}
+[inputs.{{ item.plugin }}.tags]
+{% for items in item.tags %}
+  {{ items }}
+{% endfor %}
+{% endif %}
+{% if item.tagpass is defined and item.tagpass is iterable %}
+[inputs.{{ item.plugin }}.tagpass]
+{% for items in item.tagpass %}
+    {{ items }}
+{% endfor %}
+{% endif %}
+{% if item.tagdrop is defined and item.tagdrop is iterable %}
+[inputs.{{ item.plugin }}.tagdrop]
+{% for items in item.tagdrop %}
+    {{ items }}
+{% endfor %}
+{% endif %}
+{% if item.objects is defined and item.objects is iterable %}
+{% for object in item.objects %}
+[[inputs.{{ item.plugin }}.object]]
+  ObjectName = {{ object.name | to_json }}
+  Instances = {{ object.instances | default(["*"]) | to_json }}
+  Counters = {{ object.counters | default(["*"]) | to_json }}
+  Measurement = {{ object.measurement | default("win_perf_counters") | to_json }}
+  IncludeTotal = {{ object.total | default(false) | string | lower }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
 
-  ## The value of this tag will be used to determine the database.  If this
-  ## tag is not set the 'database' option is used as the default.
-  # database_tag = ""
-
-  ## If true, no CREATE DATABASE queries will be sent.  Set to true when using
-  ## Telegraf with a user without permissions to create databases or when the
-  ## database already exists.
-  skip_database_creation = true
-
-  ## Name of existing retention policy to write to.  Empty string writes to
-  ## the default retention policy.  Only takes effect when using HTTP.
-  # retention_policy = ""
-
-  ## Write consistency (clusters only), can be: "any", "one", "quorum", "all".
-  ## Only takes effect when using HTTP.
-  # write_consistency = "any"
-
-  ## Timeout for HTTP messages.
-  # timeout = "5s"
-
-  ## HTTP Basic Auth
-  username = "{{ influxdb_user }}"
-  password = "{{ influxdb_password }}"
-
-  ## HTTP User-Agent
-  # user_agent = "telegraf"
-
-  ## UDP payload size is the maximum packet size to send.
-  # udp_payload = "512B"
-
-  ## Optional TLS Config for use on HTTP connections.
-  # tls_ca = "/etc/telegraf/ca.pem"
-  # tls_cert = "/etc/telegraf/cert.pem"
-  # tls_key = "/etc/telegraf/key.pem"
-  ## Use TLS but skip chain & host verification
-  # insecure_skip_verify = false
-
-  ## HTTP Proxy override, if unset values the standard proxy environment
-  ## variables are consulted to determine which proxy, if any, should be used.
-  # http_proxy = "http://corporate.proxy:3128"
-
-  ## Additional HTTP headers
-  # http_headers = {"X-Special-Header" = "Special-Value"}
-
-  ## HTTP Content-Encoding for write request body, can be set to "gzip" to
-  ## compress body or "identity" to apply no encoding.
-  # content_encoding = "identity"
-
-  ## When true, Telegraf will output unsigned integers as unsigned values,
-  ## i.e.: "42u".  You will need a version of InfluxDB supporting unsigned
-  ## integer values.  Enabling this option will result in field type errors if
-  ## existing data has been written.
-  # influx_uint_support = false
+{% if telegraf_plugins_default is defined and telegraf_plugins_default|length == 0 %}
+{% if telegraf_plugins_extra is defined and telegraf_plugins_extra.keys() | length == 0 %}
+# No plugins configured, added a mem plugin so telegraf doesn't stop working.
+[[inputs.mem]]
+{% endif %}
+{% endif %}
