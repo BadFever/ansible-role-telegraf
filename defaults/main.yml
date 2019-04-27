@@ -11,16 +11,16 @@ telegraf_global_tags: []
 
 # Telegraf agent
 telegraf_agent_interval: 10
-telegraf_agent_debug: False
-telegraf_agent_round_interval: True
+telegraf_agent_debug: false
+telegraf_agent_round_interval: true
 telegraf_agent_flush_interval: 10
 telegraf_agent_flush_jitter: 0
 telegraf_agent_collection_jitter: 0
 telegraf_agent_metric_batch_size: 1000
 telegraf_agent_metric_buffer_limit: 10000
-telegraf_agent_quiet: False
+telegraf_agent_quiet: false
 telegraf_agent_logfile: ""
-telegraf_agent_omit_hostname: False
+telegraf_agent_omit_hostname: false
 
 # Telegraf output plugins
 telegraf_agent_output:
@@ -47,4 +47,4 @@ telegraf_plugins_default:
   - plugin: kernel
 
 telegraf_plugins_extra: {}
-telegraf_plugins_extra_exclusive: False
+telegraf_plugins_extra_exclusive: false
