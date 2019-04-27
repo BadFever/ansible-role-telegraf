@@ -2,7 +2,7 @@
 - name: Install on RedHat
   include_tasks: redhat.yml
   when:
-    - ansibe_os_family == "RedHat"
+    - ansible_os_family == "RedHat"
 
 - name: Configure Unix
   include_tasks: config_unix.yml
