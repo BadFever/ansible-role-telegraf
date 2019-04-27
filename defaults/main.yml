@@ -1,5 +1,5 @@
 ---
-telegraf_agent_config_path: /etc/telegraf
+# repo
 telegraf_redhat_releasever: "$releasever"
 telegraf_yum_baseurl:
   centos: "https://repos.influxdata.com/rhel/{{ telegraf_redhat_releasever }}/$basearch/stable"
@@ -10,7 +10,9 @@ telegraf_yum_baseurl:
 telegraf_global_tags: []
 
 # Telegraf agent
+telegraf_agent_config_path: /etc/telegraf
 telegraf_agent_interval: 10
+telegraf_agent_hostname: "{{ ansible_fqdn }}"
 telegraf_agent_debug: false
 telegraf_agent_round_interval: true
 telegraf_agent_flush_interval: 10
